@@ -25,6 +25,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "HTS221.h"
 /* USER CODE END Includes */
 
@@ -369,9 +371,13 @@ void task1000ms(void const * argument)
   for(;;)
   {
     osDelay(1000);
-		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 		
-		float temp = hts221_leer_temp();
+	short temp = (short)hts221_leer_temp();
+	char txbuf[2] = {0};
+	sprintf(txbuf, "%d", temp);
+	
+	HAL_UART_Transmit(&huart4, (uint8_t*)txbuf, 2, 10);
 		
   }
   /* USER CODE END task1000ms */

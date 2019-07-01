@@ -102,7 +102,8 @@ float hts221_leer_temp(void)
 	/*y = mx + b      =>      x = (y - b)/m*/
 	float x = (float)(temp - bT)/mT;
 	
-	return x;
+	/*recuerda que ese valor simboliza la temperatura en °C * 8*/
+	return x/8;
 }
 
 
