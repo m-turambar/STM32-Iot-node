@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#include "HTS221.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,6 +68,21 @@ void task1000ms(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/*Works: 3c3d 5253 5a5b acad babb bebf d4d5*/
+/*Only device 5a5b is a mistery
+for(int i=0; i<256; ++i)
+{
+	HAL_StatusTypeDef res = HAL_I2C_IsDeviceReady(&hi2c2, i, 1, 10);
+	if(res == HAL_OK) 
+	{
+		uint8_t uu = i&0xFF;
+		HAL_UART_Transmit(&huart4, &uu, 1, 10);
+	}
+}
+*/
+
+
 
 /* USER CODE END 0 */
 
@@ -344,18 +360,19 @@ void task1000ms(void const * argument)
 {
   /* USER CODE BEGIN task1000ms */
   /* Infinite loop */
-	uint8_t c = 'z';
+	hts221_encender();
+	uint8_t r = hts221_who_am_i();
+	HAL_UART_Transmit(&huart4, &r, 1, 10);
 	
-	uint8_t reg = 0x28;
-	uint8_t rxbuf[4] = {0};
+	hts221_iniciar_calibracion();
+	
   for(;;)
   {
     osDelay(1000);
 		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 		
-		HAL_I2C_Master_Transmit(&hi2c2, 0xBE, &reg, 1, 10);
-		HAL_I2C_Master_Receive(&hi2c2, 0xBF, rxbuf, 4, 10);
-		HAL_UART_Transmit(&huart4, rxbuf, 4, 10);
+		float temp = hts221_leer_temp();
+		
   }
   /* USER CODE END task1000ms */
 }
