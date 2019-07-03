@@ -5,12 +5,14 @@
 #include "stm32l4xx_hal.h"
 #include "cmsis_os.h"
 
+#define rCTRL_REG1      (0x20)
+
 extern I2C_HandleTypeDef hi2c2;
 
 static uint8_t rWHO_AM_I = (0x0F); //0 means do not autoincrement
 
-static const	uint8_t rCTRL_REG1 = (0x20);
-static uint8_t m_encender[2] = {rCTRL_REG1, 0x80};
+//static const	uint8_t rCTRL_REG1 = (0x20);
+static uint8_t m_encender[2] = {rCTRL_REG1, 0x83};
 
 /*recuerda, los bits menos significativos son la dirección del registro. El MSb permite address autoincrement*/
 static uint8_t rTEMP_OUT_L = 0x2A | 0x80; //este bitwise or es para setear el MSb, para permitir address autoincrement
@@ -54,6 +56,8 @@ uint8_t hts221_iniciar_calibracion(void)
 	const uint8_t rT0_OUT = 0x3C | 0x80;
 	const uint8_t rT1_OUT = 0x3E | 0x80;
 	HAL_StatusTypeDef res;
+        
+        res = HAL_OK;
 	
 	/*leemos los registros 32 y 33, los de temperatura x8*/
 	res |= HAL_I2C_Master_Transmit(&hi2c2, 0xBF, (uint8_t*)&rT0_degC_x8, 1, 10);

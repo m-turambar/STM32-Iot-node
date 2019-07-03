@@ -97,6 +97,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -116,7 +117,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_UART4_Init();
+//  MX_UART4_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
 
@@ -360,11 +361,14 @@ void StartDefaultTask(void const * argument)
 /* USER CODE END Header_task1000ms */
 void task1000ms(void const * argument)
 {
+  static short temp = 0;
+  static char txbuf[2] = {0};
+  
   /* USER CODE BEGIN task1000ms */
   /* Infinite loop */
 	hts221_encender();
 	uint8_t r = hts221_who_am_i();
-	HAL_UART_Transmit(&huart4, &r, 1, 10);
+//	HAL_UART_Transmit(&huart4, &r, 1, 10);
 	
 	hts221_iniciar_calibracion();
 	
@@ -373,11 +377,10 @@ void task1000ms(void const * argument)
     osDelay(1000);
 	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 		
-	short temp = (short)hts221_leer_temp();
-	char txbuf[2] = {0};
+	temp = (short)hts221_leer_temp();
 	sprintf(txbuf, "%d", temp);
 	
-	HAL_UART_Transmit(&huart4, (uint8_t*)txbuf, 2, 10);
+//	HAL_UART_Transmit(&huart4, (uint8_t*)txbuf, 2, 10);
 		
   }
   /* USER CODE END task1000ms */
