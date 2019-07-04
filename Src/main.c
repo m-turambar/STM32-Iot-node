@@ -30,7 +30,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "HTS221.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

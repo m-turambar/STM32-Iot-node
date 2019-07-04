@@ -26,6 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
+#include "HTS221.h"
 
 /* USER CODE END Includes */
 
@@ -50,6 +51,9 @@ extern "C"{
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+
+extern UART_HandleTypeDef huart4;
+extern I2C_HandleTypeDef hi2c2;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -135,10 +139,15 @@ void StartDefaultTask(void const * argument)
 void task1000ms(void const * argument)
 {
   /* USER CODE BEGIN task1000ms */
-  /* Infinite loop */
+  HTS221 hts221(&hi2c2); 
+  
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+    hts221.leer_temp();
+    
+    huart4 << hts221;
   }
   /* USER CODE END task1000ms */
 }
