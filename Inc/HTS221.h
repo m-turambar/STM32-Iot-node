@@ -22,7 +22,8 @@ struct HTS221
 
     /*Valores de los registros de calibracion*/
     uint16_t T0_degC_x8{0}, T1_degC_x8{0}, H0_rH_x2{0}, H1_rH_x2{0};
-    int16_t T0_OUT{0}, T1_OUT{0}, H0_OUT{0}, H1_OUT{0};
+    uint16_t H0_OUT{0}, H1_OUT{0};
+    int16_t T0_OUT{0}, T1_OUT{0};
 
     /*y = mx + b para las rectas de temperatura y humedad*/
     float mT, bT, mH, bH;

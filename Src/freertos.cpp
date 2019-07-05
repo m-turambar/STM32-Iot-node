@@ -146,6 +146,7 @@ void task1000ms(void const * argument)
     osDelay(1000);
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
     hts221.leer_temp();
+    hts221.leer_humedad();
     
     huart4 << hts221;
   }
