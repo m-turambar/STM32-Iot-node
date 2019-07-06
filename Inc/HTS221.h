@@ -3,11 +3,20 @@
 
 #include <stdint.h>
 
-#include "stm32l4xx_hal.h"
+uint8_t who_am_i(uint8_t* who);
+uint8_t encender(void);
+uint8_t calibrar_temp(void);
+uint8_t calibrar_humedad(void);
+int leer_temp(void);
+int leer_humedad(void);
+void imprimir_uart(void* puart); //asi no tenemos que incluir el hdr
 
-#ifdef __cplusplus
+
+/*#ifdef __cplusplus
 extern "C"{
 #endif
+
+#include "stm32l4xx_hal.h"
 
 struct HTS221
 {
@@ -20,12 +29,12 @@ struct HTS221
     int leer_temp(void);
     int leer_humedad(void);
 
-    /*Valores de los registros de calibracion*/
+    //Valores de los registros de calibracion
     uint16_t T0_degC_x8{0}, T1_degC_x8{0}, H0_rH_x2{0}, H1_rH_x2{0};
     uint16_t H0_OUT{0}, H1_OUT{0};
     int16_t T0_OUT{0}, T1_OUT{0};
 
-    /*y = mx + b para las rectas de temperatura y humedad*/
+    //y = mx + b para las rectas de temperatura y humedad
     float mT, bT, mH, bH;
     short temperatura, humedad;
   
@@ -38,5 +47,6 @@ void operator<<(UART_HandleTypeDef huart, HTS221 hts);
 #ifdef __cplusplus
 }
 #endif
+*/
 
 #endif
