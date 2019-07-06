@@ -11,22 +11,22 @@
 #define ODR1					(1 << 1)
 #define PD						(1 << 7)
 
-static int ADDR_W =				(0xBF)
-static int ADDR_R =				(0xBE)
+static int ADDR_W =				(0xBF);
+static int ADDR_R =				(0xBE);
 
-static int rCTRL_REG1 =			(0x20)
-static int rWHO_AM_I =			(0x0F)
+#define    rCTRL_REG1			(0x20)
+static int rWHO_AM_I =			(0x0F);
 
-static int rTEMP_OUT_L = 		(0x2A | 0x80) 
-static int rT0_degC_x8 = 		(0x32 | 0x80)
-static int rT1_T0_msbs = 		(0x35)
-static int rT0_OUT = 			(0x3C | 0x80)
-static int rT1_OUT = 			(0x3E | 0x80)
+static int rTEMP_OUT_L = 		(0x2A | 0x80);
+static int rT0_degC_x8 = 		(0x32 | 0x80);
+static int rT1_T0_msbs = 		(0x35);
+static int rT0_OUT = 			(0x3C | 0x80);
+static int rT1_OUT = 			(0x3E | 0x80);
 
-static int rHUM_OUT_L =			(0x2A | 0x80) 
-static int rH0_x2 =				(0x32 | 0x80)
-static int rH0_OUT = 			(0x3C | 0x80)
-static int rH1_OUT = 			(0x3E | 0x80)
+static int rHUM_OUT_L =			(0x2A | 0x80);
+static int rH0_x2 =				(0x32 | 0x80);
+static int rH0_OUT = 			(0x3C | 0x80);
+static int rH1_OUT = 			(0x3E | 0x80);
 
 /*mensaje para encender el HTS221*/
 static uint8_t m_encender[2] = {rCTRL_REG1, PD | ODR1 | ODR0};
@@ -38,10 +38,10 @@ extern I2C_HandleTypeDef hi2c2;
 /*recuerda, los bits menos significativos son la dirección del registro. El MSb permite address autoincrement*/
 
 /*Valores de los registros de calibracion*/
-uint16_t T0_Cal, T1_Cal;
+uint16_t T0_degC_x8, T1_degC_x8;
 int16_t T0_OUT, T1_OUT;
 uint16_t H0_OUT, H1_OUT;
-uint8_t H0_Cal, H1_Cal;
+uint8_t H0_x2, H1_x2;
 
 /*y = mx + b*/
 float mT, bT, mH, bH;
@@ -52,10 +52,9 @@ float temperatura, humedad; //se actualizan con cada lectura
 uint8_t who_am_i(uint8_t* who)
 {
 	int res = HAL_OK;
-	uint8_t t = rWHO
-	res |= HAL_I2C_Master_Transmit(&hi2c2, , &rWHO_AM_I, 1, 10);
+	res |= HAL_I2C_Master_Transmit(&hi2c2, ADDR_W, (uint8_t*)&rWHO_AM_I, 1, 10);
 	res |= HAL_I2C_Master_Receive(&hi2c2, ADDR_R, who, 1, 10);
-	return res
+	return res;
 }
 
 
@@ -106,7 +105,7 @@ int leer_temp(void)
 {
 	static uint8_t rxbuf[2] = {0};
 	int res = HAL_OK;
-	res |= HAL_I2C_Master_Transmit(&hi2c2, ADDR_W, &rTEMP_OUT_L, 1, 10);
+	res |= HAL_I2C_Master_Transmit(&hi2c2, ADDR_W, (uint8_t*)&rTEMP_OUT_L, 1, 10);
 	res |= HAL_I2C_Master_Receive(&hi2c2, ADDR_R, rxbuf, 2, 10);
 	int16_t temp = 0; //tiene signo. El MSb es el del signo
 	temp = rxbuf[0] | (rxbuf[1] << 8);
@@ -153,7 +152,7 @@ int leer_humedad(void)
 	static uint8_t rxbuf[2] = {0};
 	int res = HAL_OK;
 	
-	res |= HAL_I2C_Master_Transmit(&hi2c2, ADDR_W, &rHUM_OUT_L, 1, 10);
+	res |= HAL_I2C_Master_Transmit(&hi2c2, ADDR_W, (uint8_t*)&rHUM_OUT_L, 1, 10);
 	res |= HAL_I2C_Master_Receive(&hi2c2, ADDR_R, rxbuf, 2, 10);
 	
 	int16_t temp = 0;
@@ -169,7 +168,8 @@ int leer_humedad(void)
 void imprimir_uart(void* puart)
 {
 	UART_HandleTypeDef* huart = (UART_HandleTypeDef*)puart;
-	short tt{0}, hh{0};
+	short tt = 0;
+	short hh = 0;
 	tt = (short)temperatura;
 	hh = (short)humedad;
 	uint8_t txbuf[4];

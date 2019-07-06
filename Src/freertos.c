@@ -139,16 +139,18 @@ void StartDefaultTask(void const * argument)
 void task1000ms(void const * argument)
 {
   /* USER CODE BEGIN task1000ms */
-  HTS221 hts221(&hi2c2); 
+  encender();
+  calibrar_temp();
+  calibrar_humedad();
   
   for(;;)
   {
     osDelay(1000);
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
-    hts221.leer_temp();
-    hts221.leer_humedad();
+    leer_temp();
+    leer_humedad();
     
-    huart4 << hts221;
+    imprimir_uart(&huart4);
   }
   /* USER CODE END task1000ms */
 }
